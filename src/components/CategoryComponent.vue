@@ -4,10 +4,10 @@
       :style="{backgroundColor: color}"
       class="btn"
       >
-          <img :src="picture" alt="item picture" width="70px" height="70px" />
-          <div class="text">
+          <img :src="image" alt="item image" width="70px" height="70px" />
+          <div class="title">
               <span class="ItemName">{{ name }}</span>
-              <span class="ItemQuantity">{{ quantity }}</span>
+              <span class="productCount">{{ productCount }}</span>
           </div>
       </button>
   </div>
@@ -16,10 +16,13 @@
 <script>
   export default {
       props: {
-      color: String,
       name: String,
-      quantity: String,
-      picture: String,
+      productCount: {
+      type: Number,
+      default: 0
+    },
+      color: String,
+      image: String,
       },
   };
 </script>
@@ -37,7 +40,7 @@
       border-radius: 10px;
   }
 
-  .text{
+  .title{
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -50,7 +53,7 @@
       font-weight: bold;
   }
 
-  .ItemQuantity{
+  .productCount{
       color: #B6B6B6;
       font-size: 8px;
   }

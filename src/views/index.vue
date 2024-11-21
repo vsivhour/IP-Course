@@ -1,27 +1,30 @@
 <template>
     <div class="Wrapper">
       <div class="Container">
-        <CategoryComponent v-for="category in Categories" :key="category" 
-        :color="category.color"  
+        <CategoryComponent v-for="category in Categories" :key="category"   
         :name="category.name"
-        :quantity="category.quantity"
-        :picture="category.picture"
+        :productCount="category.productCount"
+        :color="category.color"
+        :image="category.image"
         />
       </div>
   
       <div class="PromotionContainer">
-        <PromotionComponent v-for="promotion in Promotions" :key="promotion" 
-        :color="promotion.color"  
-        :text="promotion.text"
-        :picture="promotion.picture"
+        <PromotionComponent v-for="promotion in Promotions" :key="promotion"   
+        :title="promotion.title"
+        :url="promotion.url"
+        :color="promotion.color"
+        :buttonColor="promotion.buttonColor"
+        :image="promotion.image"
         />
       </div>
     </div>
 </template>
 
 <script>
-  import CategoryComponent from '../components/CategoryComponent.vue';
-  import PromotionComponent from '../components/PromotionComponent.vue';
+import axios from 'axios';
+import CategoryComponent from '@/components/CategoryComponent.vue';
+import PromotionComponent from '@/components/PromotionComponent.vue';
   import { RouterView } from 'vue-router';
 
   export default{
@@ -32,89 +35,39 @@
 
     data() {
     return {
-      Categories:[
-        {
-          color:"#F2FCE4",
-          name:"Hamburger",
-          quantity:"14 items",    
-          picture: (new URL("@/assets/burger.png", import.meta.url))
-        },
-        {
-          color:"#FFFCEB" ,
-          name:"Peach",
-          quantity:"17 items",    
-          picture:(new URL("@/assets/persimmon.png", import.meta.url))
-        },
-        {
-          color:"#ECFFEC" ,
-          name:"Oganic Kiwi",
-          quantity:"21 items",    
-          picture:(new URL("@/assets/kiwi.png", import.meta.url))
-        },
-        {
-          color:"#FEEFEA" ,
-          name:"Red Apple",
-          quantity:"68 items",    
-          picture:(new URL("@/assets/apple.png", import.meta.url))
-        },
-        {
-          color:"#FFF3EB" ,
-          name:"Snack",
-          quantity:"34 items",    
-          picture:(new URL("@/assets/snack.png", import.meta.url))
-        },
-        {
-          color:"#FFF3FF" ,
-          name:"Black plum",
-          quantity:"25 items",    
-          picture:(new URL("@/assets/plum.png", import.meta.url))
-        },
-        {
-          color:"#F2FCE4" ,
-          name:"Vegetable",
-          quantity:"65 items",    
-          picture:(new URL("@/assets/cabbage.png", import.meta.url))
-        },
-        {
-          color:"#FFFCEB" ,
-          name:"Headphone",
-          quantity:"33 items",    
-          picture:(new URL("@/assets/headphone.png", import.meta.url))
-        },
+      Categories:[],
 
-        {
-          color:"#F2FCE4" ,
-          name:"Cake & Milk",
-          quantity:"54 items",    
-          picture:(new URL("@/assets/snack2.png", import.meta.url))
-        },
-        {
-          color:"#FFF3FF" ,
-          name:"Orange",
-          quantity:"63 items",    
-          picture:(new URL("@/assets/orange.png", import.meta.url))
-        }
-      ],
-
-      Promotions:[
-        {
-          color:"#F0E8D5",
-          text:"Everyday Fresh & Clean with Our Products",
-          picture:(new URL("@/assets/onion.png", import.meta.url))
-        },
-        {
-          color:"#F3E8E8",
-          text:"Make your Breakfast Healthy and Easy",
-          picture:(new URL("@/assets/juice.png", import.meta.url))
-        },
-        {
-          color:"#E7EAF3",
-          text:"The best Organic Product Online",
-          picture:(new URL("@/assets/vegetable.png", import.meta.url))
-        },
-      ],
+      Promotions:[],
     };
   },
+  mounted(){
+    this.fetchCategories();
+    this.fetchPromotions();
+  },
+
+  methods:{
+    fetchCategories(){
+      axios
+        .get('http://localhost:3000/api/categories')
+        .then(response => {
+          this.Categories = response.data;
+          console.log(response.data);
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+    fetchPromotions(){
+      axios
+        .get('http://localhost:3000/api/promotions')
+        .then(response => {
+          this.Promotions = response.data;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+  },
+}
   };
 
 
