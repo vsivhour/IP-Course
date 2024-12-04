@@ -52,7 +52,7 @@ export const useProductStore = defineStore('product', {
 
       async fetchGroups() {
         try {
-          const response = await axios.get('http://localhost:3000/api/groups');
+          const response = await axios.get(' http://localhost:3000/api/groups');
           this.groups = response.data;
         } catch (error) {
           console.error('Error fetching groups:', error);
