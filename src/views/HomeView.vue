@@ -1,9 +1,9 @@
 <template>
   <div class="wrapper">
     <!-- Categories Section -->
-    <div v-if="Categories.length" class="container">
+    <div class="container">
       <CategoryComponent 
-        v-for="category in Categories" 
+        v-for="category in categories" 
         :key="category.id"   
         :name="category.name"
         :productCount="category.productCount"
@@ -13,9 +13,9 @@
     </div>
 
     <!-- Promotions Section -->
-    <div v-if="Promotions.length" class="promotion-container">
+    <div class="promotion-container">
       <PromotionComponent 
-        v-for="promotion in Promotions" 
+        v-for="promotion in promotions" 
         :key="promotion.id"   
         :title="promotion.title"
         :url="promotion.url"
@@ -27,7 +27,7 @@
 
     <!-- Menu & Products Section -->
     <div class="menu-products-container">
-      <MenuComponent :categories="Categories" @category-selected="filterProducts" />
+      <MenuComponent :categories="categories" @category-selected="filterProducts" />
       <ProductComponent :products="filteredProducts" />
     </div>
   </div>
@@ -39,6 +39,9 @@ import CategoryComponent from '@/components/CategoryComponent.vue';
 import PromotionComponent from '@/components/PromotionComponent.vue';
 import MenuComponent from '@/components/MenuComponent.vue';
 import ProductComponent from '@/components/ProductComponent.vue';
+import { useProductStore } from '@/stores/product';
+import { onMounted } from 'vue';
+import { mapState } from 'pinia';
 
 export default {
   components: {
@@ -50,60 +53,44 @@ export default {
 
   data() {
     return {
-      Categories: [],
-      Promotions: [],
-      products: [],
       selectedCategory: 'All'
     };
   },
+  setup() {
+    const productStore = useProductStore();
+    return { productStore };
+  },
 
+  // computed: {
+  //   filteredProducts() {
+  //     return this.selectedCategory === 'All' 
+  //       ? this.products 
+  //       : this.products.filter(p => p.group === this.selectedCategory);
+  //   }
+  // },
   computed: {
+    ...mapState(useProductStore, {
+      groups: 'groups',
+      categories: 'categories',
+      promotions: 'promotions',
+      products: 'products',
+    }),
     filteredProducts() {
       return this.selectedCategory === 'All' 
         ? this.products 
         : this.products.filter(p => p.group === this.selectedCategory);
     }
   },
+  async mounted() {
+      await this.productStore.fetchGroups();
+      await this.productStore.fetchCategories();
+      await this.productStore.fetchPromotions();
+      await this.productStore.fetchProducts();
 
-  mounted() {
-    this.fetchCategories();
-    this.fetchPromotions();
-    this.fetchProducts();
+      console.log('this.products', this.products)
   },
-
-  methods: {
-    async fetchCategories() {
-      try {
-        const response = await axios.get('http://localhost:3000/api/categories');
-        this.Categories = response.data;
-      } catch (error) {
-        console.error('Error fetching categories:', error);
-      }
-    },
-
-    async fetchPromotions() {
-      try {
-        const response = await axios.get('http://localhost:3000/api/promotions');
-        this.Promotions = response.data;
-      } catch (error) {
-        console.error('Error fetching promotions:', error);
-      }
-    },
-
-    async fetchProducts() {
-      try {
-        const response = await axios.get('http://localhost:3000/api/products');
-        this.products = response.data;
-      } catch (error) {
-        console.error('Error fetching products:', error);
-      }
-    },
-
-    filterProducts(category) {
-      this.selectedCategory = category;
-    }
-  }
 };
+
 </script>
 
 <style scoped>
